@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NCC Build Console — mockup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF1F5;
+    --surface:#FFFFFF;
+    --border:#DCE1E8;
+    --border-strong:#C3CAD5;
+    --ink:#13213C;
+    --ink-soft:#586479;
+    --ink-faint:#8E97A8;
+    --navy:#0F2B58;
+    --blue:#1A437B;
+    --blue-bright:#275FB2;
+    --teal:#2E7D5B;
+    --teal-bg:#E4F1EA;
+    --amber:#9A6412;
+    --amber-bg:#FCEED4;
+    --amber-line:#F0C878;
+    --danger:#9C3B2E;
+    --radius:10px;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  a{color:inherit;}
+
+  .app{
+    max-width:1360px;
+    margin:0 auto;
+    padding:28px 32px 80px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:28px;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .brand .mark{
+    width:26px;height:26px;
+    border-radius:7px;
+    background:var(--navy);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:600;
+    flex:none;
+  }
+  .brand .name{
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:.01em;
+  }
+  .brand .name span{color:var(--ink-faint); font-weight:400;}
+
+  .conn-status{
+    display:flex;
+    gap:22px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .conn-status .item{display:flex; align-items:center; gap:7px;}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .dot.on{background:var(--teal); box-shadow:0 0 0 3px var(--teal-bg);}
+  .dot.off{background:var(--ink-faint); box-shadow:0 0 0 3px #E4E6EB;}
+
+  .page-head{
+    margin-bottom:28px;
+  }
+  .page-head .crumb{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin-bottom:6px;
+  }
+  .page-head h1{
+    margin:0;
+    font-size:26px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .page-head p{
+    margin:6px 0 0;
+    color:var(--ink-soft);
+    font-size:14.5px;
+    max-width:640px;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:24px;
+    align-items:start;
+  }
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr;}
+    .preview-col{position:static !important;}
+  }
+
+  .form-col{display:flex; flex-direction:column; gap:18px;}
+
+  .section{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px 24px;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .step-no{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--blue-bright);
+    background:#E9F0FA;
+    border-radius:5px;
+    padding:2px 7px;
+    font-weight:600;
+    flex:none;
+  }
+  .section-head h2{
+    font-size:15.5px;
+    font-weight:600;
+    margin:0;
+  }
+  .section-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 16px 34px;
+  }
+
+  label.field-label{
+    display:block;
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .hint{
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:5px;
+  }
+
+  input[type=text], input[type=email], select, textarea{
+    width:100%;
+    border:1px solid var(--border-strong);
+    border-radius:7px;
+    padding:9px 11px;
+    font-size:13.5px;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:#fff;
+  }
+  input[type=text]:focus, input[type=email]:focus, select:focus, textarea:focus{
+    outline:2px solid var(--blue-bright);
+    outline-offset:1px;
+    border-color:var(--blue-bright);
+  }
+  input.mono{font-family:var(--mono); font-size:13px;}
+  textarea{resize:vertical; min-height:84px; line-height:1.5;}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+
+  /* Build-type radio cards */
+  .type-cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-left:34px;
+  }
+  .type-card{
+    border:1px solid var(--border-strong);
+    border-radius:9px;
+    padding:14px 14px 15px;
+    cursor:pointer;
+    background:#fff;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .type-card:hover{border-color:var(--blue-bright);}
+  .type-card input{position:absolute; opacity:0; pointer-events:none;}
+  .type-card .t-title{font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:8px;}
+  .type-card .t-desc{font-size:12px; color:var(--ink-soft); margin-top:5px; line-height:1.45;}
+  .radio-dot{
+    width:15px;height:15px;border-radius:50%;
+    border:1.5px solid var(--border-strong);
+    flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .radio-dot::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue-bright);opacity:0;}
+  .type-card.selected{border-color:var(--blue-bright); background:#F3F7FD;}
+  .type-card.selected .radio-dot{border-color:var(--blue-bright);}
+  .type-card.selected .radio-dot::after{opacity:1;}
+
+  /* Source panels (conditional) */
+  .source-panel{margin-left:34px; display:none;}
+  .source-panel.active{display:block;}
+  .upload-well{
+    border:1.5px dashed var(--border-strong);
+    border-radius:9px;
+    padding:18px;
+    text-align:center;
+    font-size:13px;
+    color:var(--ink-soft);
+    background:#FAFBFC;
+  }
+  .upload-well strong{color:var(--blue-bright); font-weight:600;}
+
+  .indent{margin-left:34px;}
+
+  /* Chips */
+  .chip-grid{display:flex; flex-wrap:wrap; gap:9px;}
+  .chip{
+    border:1px solid var(--border-strong);
+    border-radius:20px;
+    padding:7px 14px;
+    font-size:13px;
+    cursor:pointer;
+    background:#fff;
+    user-select:none;
+    display:flex; align-items:center; gap:7px;
+  }
+  .chip .box{
+    width:14px;height:14px;border-radius:4px;
+    border:1.5px solid var(--border-strong);
+    flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .chip.on{border-color:var(--blue-bright); background:#F3F7FD; color:var(--blue);}
+  .chip.on .box{background:var(--blue-bright); border-color:var(--blue-bright);}
+  .chip.on .box::after{content:"✓"; color:#fff; font-size:10px; line-height:1;}
+
+  /* Tenant select row */
+  .tenant-option{display:flex; align-items:center; justify-content:space-between;}
+  .lock-note{
+    display:flex; gap:8px; align-items:flex-start;
+    font-size:12px; color:var(--amber);
+    background:var(--amber-bg);
+    border:1px solid var(--amber-line);
+    border-radius:7px;
+    padding:9px 11px;
+    margin-top:10px;
+  }
+
+  /* Toggles */
+  .toggle-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 0;
+    border-top:1px solid var(--border);
+  }
+  .toggle-row:first-of-type{border-top:none; padding-top:2px;}
+  .toggle-copy .t-name{font-size:13.5px; font-weight:500;}
+  .toggle-copy .t-desc{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .switch{
+    position:relative; width:38px; height:22px; border-radius:12px;
+    background:var(--border-strong); flex:none; cursor:pointer;
+  }
+  .switch .knob{
+    position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%;
+    background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25);
+    transition:left .15s ease;
+  }
+  .switch.on{background:var(--teal);}
+  .switch.on .knob{left:18px;}
+  .switch.locked{background:var(--teal); opacity:.85; cursor:not-allowed;}
+  .locked-tag{
+    font-size:10.5px; font-family:var(--mono); color:var(--teal);
+    background:var(--teal-bg); border-radius:5px; padding:2px 6px; margin-left:8px;
+  }
+
+  /* Footer actions */
+  .actions{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:4px;
+  }
+  .btn{
+    font-family:var(--sans);
+    font-size:13.5px;
+    font-weight:600;
+    padding:11px 20px;
+    border-radius:8px;
+    border:1px solid transparent;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--navy); color:#fff;}
+  .btn-primary:hover{background:#0B2044;}
+  .btn-ghost{background:transparent; color:var(--ink-soft); border-color:var(--border-strong);}
+  .btn-ghost:hover{border-color:var(--ink-soft); color:var(--ink);}
+
+  /* ---------- Right column ---------- */
+  .preview-col{
+    position:sticky;
+    top:24px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .preview-card{
+    background:var(--navy);
+    border-radius:var(--radius);
+    color:#EAF0FB;
+    overflow:hidden;
+  }
+  .preview-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+  .preview-head .title{font-size:12.5px; font-weight:600; letter-spacing:.02em; color:#CFE0FA;}
+  .preview-head .badge{
+    font-family:var(--mono); font-size:11px;
+    background:rgba(255,255,255,.1); padding:2px 8px; border-radius:5px; color:#B9CCEC;
+  }
+  .preview-body{
+    font-family:var(--mono);
+    font-size:12.3px;
+    line-height:1.7;
+    padding:16px;
+    white-space:pre;
+    overflow-x:auto;
+  }
+  .preview-body .k{color:#8FB4E8;}
+  .preview-body .s{color:#F3C98B;}
+  .preview-body .n{color:#8FD6B4;}
+  .preview-body .punct{color:#6E85AE;}
+
+  .checklist-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 18px 6px;
+  }
+  .checklist-card h3{
+    margin:0 0 12px; font-size:13px; font-weight:600; color:var(--ink-soft);
+    text-transform:none;
+  }
+  .check-item{
+    display:flex; gap:10px; align-items:flex-start;
+    font-size:12.8px; color:var(--ink);
+    padding-bottom:12px;
+  }
+  .check-item .ico{
+    width:16px;height:16px;border-radius:50%;
+    flex:none; display:flex;align-items:center;justify-content:center;
+    font-size:10px; margin-top:1px;
+  }
+  .ico.pass{background:var(--teal-bg); color:var(--teal);}
+  .ico.warn{background:var(--amber-bg); color:var(--amber);}
+
+  .footnote{
+    font-size:11.5px; color:var(--ink-faint); line-height:1.6;
+    padding:2px 2px 4px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">N</span>
+      <span class="name">MCP Console <span>· Strategic Solutions</span></span>
+    </div>
+    <div class="conn-status">
+      <span class="item"><span class="dot on"></span> NCC MCP — connected (staging)</span>
+      <span class="item"><span class="dot off"></span> Salesforce MCP — not connected</span>
+    </div>
+  </div>
+
+  <div class="page-head">
+    <div class="crumb">MCP Console / New build</div>
+    <h1>Start a new NCC build</h1>
+    <p>This kicks off a tenant build through the NCC MCP. Nothing is pushed to a live tenant until the sign-off step at the end.</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- ============ LEFT: FORM ============ -->
+    <div class="form-col">
+
+      <!-- 1: build type -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">01</span><h2>What are we building?</h2></div>
+        <div class="type-cards" id="typeCards">
+          <label class="type-card selected" data-type="discovery">
+            <input type="radio" name="buildtype" checked>
+            <div class="t-title"><span class="radio-dot"></span> Discovery build</div>
+            <div class="t-desc">Turn a discovery call into a working tenant from scratch.</div>
+          </label>
+          <label class="type-card" data-type="demo">
+            <input type="radio" name="buildtype">
+            <div class="t-title"><span class="radio-dot"></span> Demo tenant</div>
+            <div class="t-desc">Stand up a tenant for an upcoming demo, no live call needed.</div>
+          </label>
+          <label class="type-card" data-type="five9">
+            <input type="radio" name="buildtype">
+            <div class="t-title"><span class="radio-dot"></span> Five9 → NCC rebuild</div>
+            <div class="t-desc">Rebuild an existing Five9 environment inside NCC.</div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 2: source -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">02</span><h2>Source</h2></div>
+
+        <div class="source-panel active" data-panel="discovery">
+          <label class="field-label">Discovery notes or call transcript</label>
+          <textarea placeholder="Paste the transcript, or a summary of what the customer needs — queues, routing logic, any surveys mentioned..."></textarea>
+          <div class="hint">The MCP reads this to infer queues, routing, and survey structure.</div>
+        </div>
+
+        <div class="source-panel" data-panel="demo">
+          <label class="field-label">What should the demo show</label>
+          <textarea placeholder="e.g. omnichannel routing for a retail use case, with a bilingual IVA and agent survey"></textarea>
+        </div>
+
+        <div class="source-panel" data-panel="five9">
+          <div class="upload-well">
+            <strong>Upload a Five9 export</strong> or drop a config file here<br>
+            <span style="font-size:11.5px;">.json, .csv, or a Five9 admin console export</span>
+          </div>
+          <div class="hint">A Five9-to-NCC mapping table is generated from this in step 6, before anything is built.</div>
+        </div>
+      </div>
+
+      <!-- 3: account + tenant -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">03</span><h2>Account &amp; target tenant</h2></div>
+        <div class="indent">
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label">Account name</label>
+              <input type="text" id="acctName" placeholder="e.g. ClearPath Health" value="ClearPath Health">
+              <div class="hint">Salesforce MCP not connected — enter manually for now.</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Opportunity ID <span style="font-weight:400;">(optional)</span></label>
+              <input type="text" class="mono" placeholder="006XXXXXXXXXXXX">
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Target tenant</label>
+            <select id="tenantSelect">
+              <option>Staging — ClearPath Health (4258998)</option>
+              <option>Staging — request a new tenant</option>
+              <option disabled>Production tenant (locked)</option>
+            </select>
+          </div>
+          <div class="lock-note">
+            <span>🔒</span>
+            <span>Production tenants are locked until the leadership-approved sign-off policy is in place.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4: scope -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">04</span><h2>What to build</h2></div>
+        <div class="indent chip-grid" id="scopeChips">
+          <div class="chip on" data-chip="queues"><span class="box"></span> Queues &amp; routing</div>
+          <div class="chip on" data-chip="ivr"><span class="box"></span> IVR workflows</div>
+          <div class="chip" data-chip="surveys"><span class="box"></span> Agent surveys</div>
+          <div class="chip" data-chip="campaigns"><span class="box"></span> Campaigns</div>
+          <div class="chip" data-chip="skills"><span class="box"></span> Skills-based routing</div>
+        </div>
+      </div>
+
+      <!-- 5: naming -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">05</span><h2>Naming convention</h2></div>
+        <div class="indent">
+          <div class="field" style="max-width:280px;">
+            <label class="field-label">Field prefix</label>
+            <input type="text" class="mono" id="prefixInput" value="cph_">
+            <div class="hint">Applied to every object built, e.g. <span style="font-family:var(--mono);">cph_queue_billing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6: safety -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">06</span><h2>Safety &amp; sign-off</h2></div>
+        <div class="indent">
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <div class="t-name">Strip server-assigned IDs before push <span class="locked-tag">always on</span></div>
+              <div class="t-desc">Removes tenantId, _id, createdBy and similar fields automatically.</div>
+            </div>
+            <div class="switch locked"><div class="knob"></div></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <div class="t-name">Require sign-off before going live <span class="locked-tag">always on</span></div>
+              <div class="t-desc">Nothing reaches the tenant until a reviewer approves it below.</div>
+            </div>
+            <div class="switch locked"><div class="knob"></div></div>
+          </div>
+          <div class="field" style="margin-top:14px;">
+            <label class="field-label">Reviewer email</label>
+            <input type="email" placeholder="you@nextiva.com" value="jose.marquez@nextiva.com">
+          </div>
+        </div>
+      </div>
+
+      <!-- 7: outputs -->
+      <div class="section">
+        <div class="section-head"><span class="step-no">07</span><h2>Outputs</h2></div>
+        <div class="indent chip-grid" id="outputChips">
+          <div class="chip on" data-chip="lucid"><span class="box"></span> Lucid architecture diagram</div>
+          <div class="chip on" data-chip="recap"><span class="box"></span> Recap document</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost">Save as draft</button>
+        <button class="btn btn-primary">Review build</button>
+      </div>
+
+    </div>
+
+    <!-- ============ RIGHT: PREVIEW ============ -->
+    <div class="preview-col">
+      <div class="preview-card">
+        <div class="preview-head">
+          <span class="title">MCP REQUEST PREVIEW</span>
+          <span class="badge">ncc.build.create</span>
+        </div>
+        <div class="preview-body" id="previewBody"></div>
+      </div>
+
+      <div class="checklist-card">
+        <h3>Before this can run</h3>
+        <div class="check-item"><span class="ico pass">✓</span> NCC MCP wrapper deployed to Cloud Run</div>
+        <div class="check-item"><span class="ico warn">!</span> Salesforce MCP connector approved</div>
+        <div class="check-item"><span class="ico pass">✓</span> Staging tenant designated</div>
+        <div class="check-item"><span class="ico warn">!</span> Sign-off policy ratified by leadership</div>
+      </div>
+
+      <div class="footnote">This is a mockup of the front end only — no build is actually created here. The real console would sit on top of the NCC MCP and Salesforce MCP once both are approved and connected.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const typeCards = document.querySelectorAll('.type-card');
+  const panels = document.querySelectorAll('.source-panel');
+  const acctName = document.getElementById('acctName');
+  const tenantSelect = document.getElementById('tenantSelect');
+  const prefixInput = document.getElementById('prefixInput');
+  const previewBody = document.getElementById('previewBody');
+
+  let state = {
+    type: 'discovery',
+    scope: ['queues','ivr'],
+    outputs: ['lucid','recap'],
+  };
+
+  typeCards.forEach(card => {
+    card.addEventListener('click', () => {
+      typeCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.type = card.dataset.type;
+      panels.forEach(p => p.classList.toggle('active', p.dataset.panel === state.type));
+      renderPreview();
+    });
+  });
+
+  document.querySelectorAll('#scopeChips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('on');
+      const key = chip.dataset.chip;
+      if (chip.classList.contains('on')) { if(!state.scope.includes(key)) state.scope.push(key); }
+      else { state.scope = state.scope.filter(k => k !== key); }
+      renderPreview();
+    });
+  });
+
+  document.querySelectorAll('#outputChips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('on');
+      const key = chip.dataset.chip;
+      if (chip.classList.contains('on')) { if(!state.outputs.includes(key)) state.outputs.push(key); }
+      else { state.outputs = state.outputs.filter(k => k !== key); }
+      renderPreview();
+    });
+  });
+
+  [acctName, tenantSelect, prefixInput].forEach(el => el.addEventListener('input', renderPreview));
+
+  function esc(str){
+    return String(str).replace(/"/g,'\\"');
+  }
+
+  function renderPreview(){
+    const acct = acctName.value || '—';
+    const tenant = tenantSelect.value;
+    const prefix = prefixInput.value || '—';
+    const scopeStr = state.scope.length
+      ? state.scope.map(s => `<span class="s">"${s}"</span>`).join(`<span class="punct">, </span>`)
+      : `<span class="punct">[]</span>`;
+    const outputsStr = state.outputs.length
+      ? state.outputs.map(s => `<span class="s">"${s}"</span>`).join(`<span class="punct">, </span>`)
+      : `<span class="punct">[]</span>`;
+
+    previewBody.innerHTML =
+`<span class="punct">{</span>
+  <span class="k">"build_type"</span><span class="punct">:</span> <span class="s">"${esc(state.type)}"</span><span class="punct">,</span>
+  <span class="k">"account"</span><span class="punct">:</span> <span class="s">"${esc(acct)}"</span><span class="punct">,</span>
+  <span class="k">"tenant"</span><span class="punct">:</span> <span class="s">"${esc(tenant)}"</span><span class="punct">,</span>
+  <span class="k">"field_prefix"</span><span class="punct">:</span> <span class="s">"${esc(prefix)}"</span><span class="punct">,</span>
+  <span class="k">"scope"</span><span class="punct">:</span> <span class="punct">[</span>${scopeStr}<span class="punct">]</span><span class="punct">,</span>
+  <span class="k">"outputs"</span><span class="punct">:</span> <span class="punct">[</span>${outputsStr}<span class="punct">]</span><span class="punct">,</span>
+  <span class="k">"strip_server_ids"</span><span class="punct">:</span> <span class="n">true</span><span class="punct">,</span>
+  <span class="k">"require_sign_off"</span><span class="punct">:</span> <span class="n">true</span>
+<span class="punct">}</span>`;
+  }
+
+  renderPreview();
+</script>
+</body>
+</html>
